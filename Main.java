@@ -1,90 +1,59 @@
-import java.util.Scanner;
+import java.util.Random;
 
 public class Main {
-    public static void main(String[] args){
-        Calculator mycalc = new Calculator();
-        mycalc.setName("Group 5");
-        System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
 
-        boolean check = true;
+    public static void RandomMatrix(int size, int[][] matrix){
+        Random random = new Random();
 
-        while(check){
-            System.out.print("Enter A to Add, S to Subtract , M to Multiply , and Q to quit. ");
-
-            Scanner s = new Scanner(System.in);
-            String letter = s.next();
-
-            String A, B;
-            Float A1 = null, B1 = null;
-
-            switch (letter){
-                case "A":
-                    System.out.print("Enter argument 1 ");
-                    A = s.next();
-                    try {
-                        A1 = Float.parseFloat(A);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
-                        break;
-                    }
-                    System.out.print("Enter argument 2 ");
-                    B = s.next();
-                    try {
-                        B1 = Float.parseFloat(B);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
-                        break;
-                    }
-                    Float sum = mycalc.addition(A1, B1);
-                    System.out.println("The sum of " + A1 + " and " + B1 + " is " + sum);
-                    break;
-                case "S":
-                    System.out.print("Enter argument 1 ");
-                    A = s.next();
-                    try {
-                        A1 = Float.parseFloat(A);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
-                        break;
-                    }
-                    System.out.print("Enter argument 2 ");
-                    B = s.next();
-                    try {
-                        B1 = Float.parseFloat(B);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
-                        break;
-                    }
-                    Float diff = mycalc.subtraction(A1, B1);
-                    System.out.println("The difference of " + A1 + " and " + B1 + " is " + diff);
-                    break;
-                case "M":
-                    System.out.print("Enter argument 1 ");
-                    A = s.next();
-                    try {
-                        A1 = Float.parseFloat(A);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
-                        break;
-                    }
-                    System.out.print("Enter argument 2 ");
-                    B = s.next();
-                    try {
-                        B1 = Float.parseFloat(B);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
-                        break;
-                    }
-                    Float prod = mycalc.multiplication(A1, B1);
-                    System.out.println("The product of " + A1 + " and " + B1 + " is " + prod);
-                    break;
-                case "Q":
-                    System.out.print("Quitting Calculator! ");
-                    check = false;
-                    break;
-                default:
-                    System.out.println("Welcome to the Calculator designed by " + mycalc.getName() + ".");
+        // Populate the matrix with random numbers
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                matrix[i][j] = random.nextInt(100); // Generate a random integer between 0 and 99
             }
         }
     }
+
+    public static void printMatrix(int[][] matrix) {
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        int size = 20; // Size of the matrix
+        int[][] m1 = new int[size][size];
+        int[][] m2 = new int[size][size];
+        int[][] result = new int[size][size];
+
+        System.out.println("Matrix 1");
+        RandomMatrix(size, m1);
+        printMatrix(m1);
+
+        System.out.println("Matrix 2");
+        RandomMatrix(size, m2);
+        printMatrix(m2);
+
+        ThreadClass[] threads = new ThreadClass[5];
+        int threadIndex = 0;
+        for (int i = 0; i < 20; i += 4) {
+            threads[threadIndex] = new ThreadClass(i, i + 4, m1, m2, result, "Thread " + (threadIndex + 1));
+            threads[threadIndex].start();
+            threadIndex++;
+        }
+
+        // Join all threads to wait for them to complete
+        for (ThreadClass thread : threads) {
+            thread.join();
+        }
+
+        // resultant product matrix
+        System.out.println("Resultant Matrix:");
+        printMatrix(result);
+    }
 }
+
+
